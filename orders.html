@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Асхана — Тапсырыстар</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --cream: #F5F0E8;
+    --warm: #E8DCC8;
+    --brown: #3D2B1F;
+    --brown-mid: #7A5C44;
+    --accent: #C4773A;
+    --white: #FDFAF5;
+    --shadow: rgba(61,43,31,0.12);
+    --green: #4A7C59;
+    --green-light: #E8F2EC;
+    --orange-light: #FEF3E8;
+    --red: #9B3A2F;
+    --red-light: #FDECEB;
+    --blue: #2B5FA0;
+    --blue-light: #EAF0FB;
+  }
+
+  body { font-family: 'DM Sans', sans-serif; background: var(--cream); min-height: 100vh; color: var(--brown); }
+
+  nav {
+    background: var(--white);
+    border-bottom: 1px solid var(--warm);
+    padding: 0 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    box-shadow: 0 2px 16px var(--shadow);
+  }
+
+  .nav-logo { font-family: 'Playfair Display', serif; font-size: 20px; display: flex; align-items: center; gap: 10px; }
+
+  .nav-links { display: flex; gap: 4px; }
+
+  .nav-link {
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    color: var(--brown-mid);
+    text-decoration: none;
+    transition: background 0.2s;
+    font-weight: 400;
+  }
+
+  .nav-link:hover { background: var(--cream); }
+  .nav-link.active { background: var(--cream); color: var(--accent); font-weight: 500; }
+
+  main { max-width: 900px; margin: 0 auto; padding: 36px 24px; }
+
+  .page-title { font-family: 'Playfair Display', serif; font-size: 32px; margin-bottom: 6px; }
+  .page-sub { color: var(--brown-mid); font-size: 14px; font-weight: 300; margin-bottom: 32px; }
+
+  /* STATS */
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 32px; }
+
+  .stat {
+    background: var(--white);
+    border-radius: 16px;
+    padding: 20px 24px;
+    box-shadow: 0 2px 12px var(--shadow);
+  }
+
+  .stat-label { font-size: 11px; color: var(--brown-mid); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 8px; }
+  .stat-val { font-size: 28px; font-weight: 600; color: var(--accent); font-family: 'Playfair Display', serif; }
+  .stat-sub { font-size: 12px; color: var(--brown-mid); margin-top: 4px; }
+
+  /* ORDERS */
+  .orders { display: flex; flex-direction: column; gap: 16px; }
+
+  .order {
+    background: var(--white);
+    border-radius: 16px;
+    padding: 20px 24px;
+    box-shadow: 0 2px 12px var(--shadow);
+    animation: fadeUp 0.4s ease both;
+  }
+
+  @keyframes fadeUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+
+  .order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 14px;
+  }
+
+  .order-id { font-size: 12px; color: var(--brown-mid); margin-bottom: 4px; }
+
+  .order-date { font-size: 13px; font-weight: 500; }
+
+  .status {
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+  }
+
+  .status.completed { background: var(--green-light); color: var(--green); }
+  .status.pending { background: var(--orange-light); color: #B36A30; }
+  .status.preparing { background: var(--blue-light); color: var(--blue); }
+  .status.cancelled { background: var(--red-light); color: var(--red); }
+
+  .order-items { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+
+  .order-item-tag {
+    background: var(--cream);
+    border-radius: 8px;
+    padding: 4px 10px;
+    font-size: 12px;
+    color: var(--brown-mid);
+  }
+
+  .order-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 12px;
+    border-top: 1px solid var(--warm);
+  }
+
+  .order-total { font-size: 16px; font-weight: 600; color: var(--accent); }
+  .order-reorder {
+    background: none;
+    border: 1.5px solid var(--warm);
+    border-radius: 8px;
+    padding: 6px 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    color: var(--brown-mid);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .order-reorder:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* BALANCE TOP UP */
+  .topup-card {
+    background: linear-gradient(135deg, var(--accent) 0%, #B36A30 100%);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 32px;
+    color: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 20px rgba(196,119,58,0.3);
+  }
+
+  .topup-left { }
+  .topup-label { font-size: 11px; opacity: 0.8; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 6px; }
+  .topup-amount { font-family: 'Playfair Display', serif; font-size: 36px; }
+
+  .topup-btn {
+    background: rgba(255,255,255,0.2);
+    border: 1.5px solid rgba(255,255,255,0.4);
+    border-radius: 10px;
+    padding: 10px 20px;
+    color: #fff;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background 0.2s;
+    backdrop-filter: blur(4px);
+  }
+
+  .topup-btn:hover { background: rgba(255,255,255,0.3); }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">🍽 Асхана</div>
+  <div class="nav-links">
+    <a href="menu.html" class="nav-link">🍽 Мәзір</a>
+    <a href="orders.html" class="nav-link active">📋 Тапсырыстар</a>
+    <a href="#" class="nav-link" onclick="logout()">🚪 Шығу</a>
+  </div>
+</nav>
+
+<main>
+  <div class="page-title">Менің тапсырыстарым</div>
+  <div class="page-sub">Барлық тапсырыстар тарихы</div>
+
+  <div class="topup-card">
+    <div class="topup-left">
+      <div class="topup-label">Ағымдағы баланс</div>
+      <div class="topup-amount">5 000 ₸</div>
+    </div>
+    <button class="topup-btn" onclick="alert('Баланс толтыру беті')">+ Баланс толтыру</button>
+  </div>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-label">Жалпы тапсырыс</div>
+      <div class="stat-val">14</div>
+      <div class="stat-sub">осы айда</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Жұмсалған</div>
+      <div class="stat-val">8 420 ₸</div>
+      <div class="stat-sub">осы айда</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Орташа тапсырыс</div>
+      <div class="stat-val">601 ₸</div>
+      <div class="stat-sub">бір рет</div>
+    </div>
+  </div>
+
+  <div class="orders" id="orders-list"></div>
+</main>
+
+<script>
+const API = 'http://127.0.0.1:8000';
+
+const statusLabel = {
+  completed: 'Аяқталды', pending: 'Күтілуде',
+  preparing: 'Дайындалуда', cancelled: 'Болдырылмады', ready: 'Дайын'
+};
+
+async function init() {
+  const userStr = localStorage.getItem('user');
+  if (!userStr) { window.location.href = 'login.html'; return; }
+  const user = JSON.parse(userStr);
+
+  document.querySelector('.topup-amount').textContent =
+    parseFloat(user.balance).toLocaleString() + ' ₸';
+
+  await loadOrders();
+}
+
+async function loadOrders() {
+  const res = await fetch(`${API}/api/orders/`, {
+    headers: { 'Authorization': 'Bearer ' + localStorage.getItem('access') }
+  });
+  if (res.status === 401) { window.location.href = 'login.html'; return; }
+
+  const data = await res.json();
+  const orders = data.results || data;
+
+  // Статистика
+  const total = orders.length;
+  const spent = orders.reduce((s, o) => s + parseFloat(o.total_amount), 0);
+  const avg = total ? Math.round(spent / total) : 0;
+
+  document.querySelector('.stats').innerHTML = `
+    <div class="stat">
+      <div class="stat-label">Жалпы тапсырыс</div>
+      <div class="stat-val">${total}</div>
+      <div class="stat-sub">барлығы</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Жұмсалған</div>
+      <div class="stat-val">${spent.toLocaleString()} ₸</div>
+      <div class="stat-sub">барлығы</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Орташа тапсырыс</div>
+      <div class="stat-val">${avg.toLocaleString()} ₸</div>
+      <div class="stat-sub">бір рет</div>
+    </div>
+  `;
+
+  const list = document.getElementById('orders-list');
+  if (orders.length === 0) {
+    list.innerHTML = '<p style="color:var(--brown-mid);text-align:center;padding:40px">Тапсырыстар жоқ</p>';
+    return;
+  }
+
+  list.innerHTML = orders.map((o, i) => {
+    const date = new Date(o.ordered_at).toLocaleString('kk-KZ');
+    const items = (o.items || []).map(it =>
+      `<span class="order-item-tag">${it.name} ×${it.quantity}</span>`
+    ).join('');
+    return `
+      <div class="order" style="animation-delay:${i * 0.07}s">
+        <div class="order-header">
+          <div>
+            <div class="order-id">ORD-${String(o.id).padStart(4,'0')}</div>
+            <div class="order-date">📅 ${date}</div>
+          </div>
+          <span class="status ${o.status}">${statusLabel[o.status] || o.status}</span>
+        </div>
+        <div class="order-items">${items || '<span class="order-item-tag">—</span>'}</div>
+        <div class="order-footer">
+          <div class="order-total">${parseFloat(o.total_amount).toLocaleString()} ₸</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+async function logout() {
+  const refresh = localStorage.getItem('refresh');
+  await fetch(`${API}/api/auth/logout/`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + localStorage.getItem('access')
+    },
+    body: JSON.stringify({ refresh })
+  });
+  localStorage.clear();
+  window.location.href = 'login.html';
+}
+
+init();
+</script>
+</body>
+</html>
