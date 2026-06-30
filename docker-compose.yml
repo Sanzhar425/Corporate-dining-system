@@ -1,0 +1,15 @@
+services:
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      - PORT=8000
+    restart: unless-stopped
+
+# Ескерту: SQLite контейнер ішінде сақталады, контейнер өшіріліп қайта
+# құрылса (rebuild) дерекқор жоғалады. Деректерді сақтау қажет болса,
+# .env файлында DATABASE_URL арқылы сыртқы PostgreSQL қосыңыз
+# (мысалы, Render/Railway-дың тегін PostgreSQL қызметі).
