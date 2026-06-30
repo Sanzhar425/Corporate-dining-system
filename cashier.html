@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Асхана — Кассир панелі</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --cream: #F5F0E8;
+    --warm: #E8DCC8;
+    --brown: #3D2B1F;
+    --brown-mid: #7A5C44;
+    --accent: #C4773A;
+    --white: #FDFAF5;
+    --shadow: rgba(61,43,31,0.12);
+    --green: #4A7C59;
+    --green-light: #E8F2EC;
+    --orange-light: #FEF3E8;
+    --red: #9B3A2F;
+    --red-light: #FDECEB;
+    --blue: #2B5FA0;
+    --blue-light: #EAF0FB;
+  }
+
+  body { font-family: 'DM Sans', sans-serif; background: var(--cream); min-height: 100vh; color: var(--brown); }
+
+  nav {
+    background: var(--white);
+    border-bottom: 1px solid var(--warm);
+    padding: 0 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    box-shadow: 0 2px 16px var(--shadow);
+  }
+
+  .nav-logo { font-family: 'Playfair Display', serif; font-size: 20px; display: flex; align-items: center; gap: 10px; }
+
+  .nav-links { display: flex; gap: 4px; }
+
+  .nav-link {
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    color: var(--brown-mid);
+    text-decoration: none;
+    transition: background 0.2s;
+    font-weight: 400;
+  }
+
+  .nav-link:hover { background: var(--cream); }
+  .nav-link.active { background: var(--cream); color: var(--accent); font-weight: 500; }
+
+  main { max-width: 1100px; margin: 0 auto; padding: 36px 24px; }
+
+  .page-title { font-family: 'Playfair Display', serif; font-size: 32px; margin-bottom: 6px; }
+  .page-sub { color: var(--brown-mid); font-size: 14px; font-weight: 300; margin-bottom: 32px; }
+
+  .tabs { display: flex; gap: 8px; margin-bottom: 24px; }
+  .tab {
+    padding: 10px 20px;
+    border-radius: 10px;
+    border: 1.5px solid var(--warm);
+    background: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--brown-mid);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .tab.active { background: var(--accent); color: var(--white); border-color: var(--accent); }
+  .tab:hover:not(.active) { border-color: var(--accent); color: var(--accent); }
+
+  .section { display: none; }
+  .section.active { display: block; }
+
+  .table-wrap {
+    background: var(--white);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px var(--shadow);
+  }
+
+  table { width: 100%; border-collapse: collapse; }
+  th, td { padding: 14px 18px; text-align: left; font-size: 13px; }
+  th { background: var(--cream); font-weight: 500; color: var(--brown-mid); text-transform: uppercase; font-size: 11px; letter-spacing: 0.5px; }
+  tr:not(:last-child) td { border-bottom: 1px solid var(--warm); }
+  tr:hover td { background: rgba(245,240,232,0.5); }
+
+  .badge {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 500;
+  }
+  .badge.completed { background: var(--green-light); color: var(--green); }
+  .badge.pending { background: var(--orange-light); color: #B36A30; }
+  .badge.preparing { background: var(--blue-light); color: var(--blue); }
+  .badge.cancelled { background: var(--red-light); color: var(--red); }
+  .badge.ready { background: #E8F2EC; color: #4A7C59; }
+
+  .action-btn {
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    cursor: pointer;
+    margin-right: 4px;
+  }
+  .btn-green { background: var(--green-light); color: var(--green); }
+  .btn-blue { background: var(--blue-light); color: var(--blue); }
+  .btn-red { background: var(--red-light); color: var(--red); }
+  .btn-orange { background: var(--orange-light); color: #B36A30; }
+
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; margin-bottom: 24px; }
+  .card {
+    background: var(--white);
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 2px 12px var(--shadow);
+  }
+  .card-label { font-size: 11px; color: var(--brown-mid); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 8px; }
+  .card-value { font-family: 'Playfair Display', serif; font-size: 24px; color: var(--accent); }
+
+  .form-row { display: flex; gap: 12px; margin-bottom: 16px; align-items: flex-end; }
+  .form-group { flex: 1; }
+  .form-label { display: block; font-size: 12px; color: var(--brown-mid); margin-bottom: 6px; }
+  .form-input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid var(--warm);
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+  }
+  .form-input:focus { outline: none; border-color: var(--accent); }
+  .form-btn {
+    padding: 10px 20px;
+    background: var(--accent);
+    color: var(--white);
+    border: none;
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    cursor: pointer;
+    height: 42px;
+  }
+  .form-btn:hover { background: #B36A30; }
+
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--green);
+    color: #fff;
+    padding: 14px 28px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    z-index: 999;
+    transition: transform 0.3s ease;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .toast.error { background: var(--red); }
+
+  .report-filters { display: flex; gap: 12px; margin-bottom: 20px; }
+  .report-btn { padding: 10px 18px; background: var(--accent); color: var(--white); border: none; border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: 13px; cursor: pointer; }
+  .report-btn:hover { background: #B36A30; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">🍽 Асхана</div>
+  <div class="nav-links">
+    <a href="menu.html" class="nav-link">🍽 Мәзір</a>
+    <a href="orders.html" class="nav-link">📋 Тапсырыстар</a>
+    <a href="cashier.html" class="nav-link active">💼 Кассир</a>
+    <a href="#" class="nav-link" onclick="logout()">🚪 Шығу</a>
+  </div>
+</nav>
+
+<main>
+  <div class="page-title">Кассир панелі</div>
+  <div class="page-sub">Тапсырыстарды басқару, баланс толтыру және есептер</div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('orders', this)">📋 Тапсырыстар</button>
+    <button class="tab" onclick="switchTab('topup', this)">💰 Баланс толтыру</button>
+    <button class="tab" onclick="switchTab('reports', this)">📊 Есептер</button>
+  </div>
+
+  <div id="tab-orders" class="section active">
+    <div class="cards" id="order-stats">
+      <div class="card"><div class="card-label">Бүгінгі тапсырыстар</div><div class="card-value" id="today-orders">0</div></div>
+      <div class="card"><div class="card-label">Бүгінгі табыс</div><div class="card-value" id="today-revenue">0 ₸</div></div>
+      <div class="card"><div class="card-label">Күтілуде</div><div class="card-value" id="pending-count">0</div></div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Пайдаланушы</th>
+            <th>Тағамдар</th>
+            <th>Сома</th>
+            <th>Статус</th>
+            <th>Уақыт</th>
+            <th>Әрекет</th>
+          </tr>
+        </thead>
+        <tbody id="orders-table"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div id="tab-topup" class="section">
+    <div class="table-wrap" style="padding: 24px;">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Пайдаланушы ID немесе аты</label>
+          <input type="text" class="form-input" id="topup-user" placeholder="Мысалы: asel">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Сома (₸)</label>
+          <input type="number" class="form-input" id="topup-amount" placeholder="5000" min="1">
+        </div>
+        <button class="form-btn" onclick="submitTopup()">Толтыру</button>
+      </div>
+
+      <h3 style="font-family:'Playfair Display',serif;font-size:18px;margin:24px 0 12px">Пайдаланушылар тізімі</h3>
+      <table>
+        <thead>
+          <tr><th>ID</th><th>Аты</th><th>Email</th><th>Рөл</th><th>Баланс</th></tr>
+        </thead>
+        <tbody id="users-table"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div id="tab-reports" class="section">
+    <div class="report-filters">
+      <button class="report-btn" onclick="loadDailyReport()">📅 Бүгінгі есеп</button>
+      <button class="report-btn" onclick="loadWeeklyReport()">📆 Апта</button>
+      <button class="report-btn" onclick="loadMonthlyReport()">🗓 Ай</button>
+    </div>
+
+    <div class="cards" id="report-cards" style="display:none">
+      <div class="card"><div class="card-label">Табыс</div><div class="card-value" id="rep-revenue">0 ₸</div></div>
+      <div class="card"><div class="card-label">Тапсырыстар</div><div class="card-value" id="rep-orders">0</div></div>
+      <div class="card"><div class="card-label">Орташа чек</div><div class="card-value" id="rep-avg">0 ₸</div></div>
+    </div>
+
+    <div class="table-wrap" style="margin-top: 20px;">
+      <h3 style="padding: 20px 20px 0; font-family:'Playfair Display',serif; font-size:18px;">Танымал тағамдар</h3>
+      <table>
+        <thead>
+          <tr><th>Тағам</th><th>Сатылған</th><th>Табыс</th></tr>
+        </thead>
+        <tbody id="popular-table"></tbody>
+      </table>
+    </div>
+  </div>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API = 'http://127.0.0.1:8000';
+const statusLabel = {
+  completed: 'Аяқталды', pending: 'Күтілуде',
+  preparing: 'Дайындалуда', cancelled: 'Болдырылмады', ready: 'Дайын'
+};
+
+let allOrders = [];
+let allUsers = [];
+
+async function init() {
+  const userStr = localStorage.getItem('user');
+  if (!userStr) { window.location.href = 'login.html'; return; }
+  const user = JSON.parse(userStr);
+  if (user.role !== 'cashier' && user.role !== 'admin') {
+    window.location.href = 'orders.html';
+    return;
+  }
+
+  await loadOrders();
+  await loadUsers();
+}
+
+function switchTab(tab, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  btn.classList.add('active');
+}
+
+async function loadOrders() {
+  const res = await fetch(`${API}/api/orders/`, {
+    headers: { 'Authorization': 'Bearer ' + localStorage.getItem('access') }
+  });
+  if (res.status === 401) { window.location.href = 'login.html'; return; }
+  const data = await res.json();
+  allOrders = data.results || data;
+
+  const today = new Date().toISOString().split('T')[0];
+  const todayOrders = allOrders.filter(o => o.ordered_at.startsWith(today));
+  const todayRevenue = todayOrders.filter(o => o.status === 'completed' || o.status === 'ready')
+    .reduce((s, o) => s + parseFloat(o.total_amount), 0);
+  const pending = allOrders.filter(o => o.status === 'pending').length;
+
+  document.getElementById('today-orders').textContent = todayOrders.length;
+  document.getElementById('today-revenue').textContent = todayRevenue.toLocaleString() + ' ₸';
+  document.getElementById('pending-count').textContent = pending;
+
+  const tbody = document.getElementById('orders-table');
+  tbody.innerHTML = allOrders.map(o => {
+    const items = (o.items || []).map(it => `${it.menu_item?.name || it.name}×${it.quantity}`).join(', ');
+    const date = new Date(o.ordered_at).toLocaleString('kk-KZ');
+
+    let actions = '';
+    if (o.status === 'pending') {
+      actions += `<button class="action-btn btn-blue" onclick="changeStatus(${o.id}, 'preparing')">Дайындау</button>`;
+      actions += `<button class="action-btn btn-red" onclick="changeStatus(${o.id}, 'cancelled')">Болдырмау</button>`;
+    } else if (o.status === 'preparing') {
+      actions += `<button class="action-btn btn-green" onclick="changeStatus(${o.id}, 'ready')">Дайын</button>`;
+    } else if (o.status === 'ready') {
+      actions += `<button class="action-btn btn-green" onclick="changeStatus(${o.id}, 'completed')">Аяқтау</button>`;
+    }
+
+    return `<tr>
+      <td>#${o.id}</td>
+      <td>${o.user?.username || '—'}</td>
+      <td>${items || '—'}</td>
+      <td><strong>${parseFloat(o.total_amount).toLocaleString()} ₸</strong></td>
+      <td><span class="badge ${o.status}">${statusLabel[o.status]}</span></td>
+      <td>${date}</td>
+      <td>${actions}</td>
+    </tr>`;
+  }).join('');
+}
+
+async function changeStatus(orderId, newStatus) {
+  const res = await fetch(`${API}/api/orders/${orderId}/update_status/`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + localStorage.getItem('access')
+    },
+    body: JSON.stringify({ status: newStatus })
+  });
+  if (res.ok) {
+    showToast('Статус жаңартылды');
+    await loadOrders();
+  } else {
+    const data = await res.json();
+    showToast(data.error || 'Қате', true);
+  }
+}
+
+async function loadUsers() {
+  const res = await fetch(`${API}/api/users/`, {
+    headers: { 'Authorization': 'Bearer ' + localStorage.getItem('access') }
+  });
+  if (!res.ok) return;
+  const data = await res.json();
+  allUsers = data.results || data;
+
+  const tbody = document.getElementById('users-table');
+  tbody.innerHTML = allUsers.map(u => `
+    <tr>
+      <td>${u.id}</td>
+      <td><strong>${u.username}</strong></td>
+      <td>${u.email}</td>
+      <td>${u.role}</td>
+      <td>${parseFloat(u.balance).toLocaleString()} ₸</td>
+    </tr>
+  `).join('');
+}
+
+async function submitTopup() {
+  const userInput = document.getElementById('topup-user').value.trim();
+  const amount = parseFloat(document.getElementById('topup-amount').value);
+
+  if (!userInput || !amount || amount <= 0) {
+    showToast('Барлық өрісті толтырыңыз', true);
+    return;
+  }
+
+  let userId = parseInt(userInput);
+  if (isNaN(userId)) {
+    const found = allUsers.find(u => u.username === userInput);
+    if (!found) { showToast('Пайдаланушы табылмады', true); return; }
+    userId = found.id;
+  }
+
+  const res = await fetch(`${API}/api/users/${userId}/topup/`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + localStorage.getItem('access')
+    },
+    body: JSON.stringify({ amount: amount })
+  });
+
+  const data = await res.json();
+  if (res.ok) {
+    showToast(`Баланс толтырылды: ${amount.toLocaleString()} ₸`);
+    document.getElementById('topup-user').value = '';
+    document.getElementById('topup-amount').value = '';
+    await loadUsers();
+  } else {
+    showToast(data.error || 'Қате', true);
+  }
+}
+
+async function loadDailyReport() {
+  await loadReport('/api/reports/daily/');
+}
+
+async function loadWeeklyReport() {
+  const end = new Date().toISOString().split('T')[0];
+  const start = new Date(Date.now() - 7 * 86400000).toISOString().split('T')[0];
+  await loadReport(`/api/reports/sales/?start=${start}&end=${end}`);
+}
+
+async function loadMonthlyReport() {
+  const now = new Date();
+  const start = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-01`;
+  const end = now.toISOString().split('T')[0];
+  await loadReport(`/api/reports/sales/?start=${start}&end=${end}`);
+}
+
+async function loadReport(url) {
+  const res = await fetch(`${API}${url}`, {
+    headers: { 'Authorization': 'Bearer ' + localStorage.getItem('access') }
+  });
+  if (!res.ok) { showToast('Есепті жүктеу сәтсіз', true); return; }
+  const data = await res.json();
+
+  document.getElementById('report-cards').style.display = 'grid';
+  document.getElementById('rep-revenue').textContent = (data.revenue || 0).toLocaleString() + ' ₸';
+  document.getElementById('rep-orders').textContent = data.orders_count || 0;
+  document.getElementById('rep-avg').textContent = (data.avg_order || 0).toLocaleString() + ' ₸';
+
+  const pop = data.popular_items || [];
+  document.getElementById('popular-table').innerHTML = pop.map(p => `
+    <tr><td>${p.menu_item__name}</td><td>${p.total_qty}</td><td>${parseFloat(p.total_revenue || 0).toLocaleString()} ₸</td></tr>
+  `).join('') || '<tr><td colspan="3" style="text-align:center;color:var(--brown-mid)">Мәлімет жоқ</td></tr>';
+}
+
+function showToast(msg, isError) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast' + (isError ? ' error' : '');
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+async function logout() {
+  const refresh = localStorage.getItem('refresh');
+  await fetch(`${API}/api/auth/logout/`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + localStorage.getItem('access')
+    },
+    body: JSON.stringify({ refresh })
+  });
+  localStorage.clear();
+  window.location.href = 'login.html';
+}
+
+init();
+</script>
+</body>
+</html>
