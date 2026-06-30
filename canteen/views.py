@@ -5,6 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 from django.db.models import Sum, Count
 from django.db import transaction as db_transaction
+from drf_spectacular.utils import extend_schema, extend_schema_view
 
 from .models import MenuItem, Order, OrderItem, Transaction, User
 from .serializers import (MenuItemSerializer, OrderSerializer,
@@ -12,6 +13,14 @@ from .serializers import (MenuItemSerializer, OrderSerializer,
 from .permissions import IsAdmin, IsAdminOrCashier, IsOwnerOrAdmin
 
 
+@extend_schema_view(
+    list=extend_schema(summary="Мәзірді тізімдеу", tags=["Menu"]),
+    retrieve=extend_schema(summary="Тағам туралы ақпарат", tags=["Menu"]),
+    create=extend_schema(summary="Жаңа тағам қосу (тек admin)", tags=["Menu"]),
+    update=extend_schema(summary="Тағамды толық жаңарту (тек admin)", tags=["Menu"]),
+    partial_update=extend_schema(summary="Тағамды ішінара жаңарту (тек admin)", tags=["Menu"]),
+    destroy=extend_schema(summary="Тағамды өшіру (soft-delete, тек admin)", tags=["Menu"]),
+)
 class MenuItemViewSet(viewsets.ModelViewSet):
     queryset = MenuItem.objects.filter(is_active=True)
     serializer_class = MenuItemSerializer
@@ -44,6 +53,12 @@ class MenuItemViewSet(viewsets.ModelViewSet):
         return Response({'detail': 'Тағам өшірілді.'}, status=status.HTTP_200_OK)
 
 
+@extend_schema_view(
+    list=extend_schema(summary="Тапсырыстар тізімі", tags=["Orders"]),
+    retrieve=extend_schema(summary="Бір тапсырыс туралы ақпарат", tags=["Orders"]),
+    create=extend_schema(summary="Жаңа тапсырыс жасау", tags=["Orders"]),
+    destroy=extend_schema(summary="Тапсырысты болдырмау", tags=["Orders"]),
+)
 class OrderViewSet(viewsets.ModelViewSet):
     serializer_class = OrderSerializer
 
@@ -199,6 +214,14 @@ class OrderViewSet(viewsets.ModelViewSet):
         return Response(OrderSerializer(order).data)
 
 
+@extend_schema_view(
+    list=extend_schema(summary="Пайдаланушылар тізімі (тек admin)", tags=["Users"]),
+    retrieve=extend_schema(summary="Пайдаланушы туралы ақпарат (тек admin)", tags=["Users"]),
+    create=extend_schema(summary="Пайдаланушы жасау (тек admin)", tags=["Users"]),
+    update=extend_schema(summary="Пайдаланушыны жаңарту (тек admin)", tags=["Users"]),
+    partial_update=extend_schema(summary="Пайдаланушыны ішінара жаңарту (тек admin)", tags=["Users"]),
+    destroy=extend_schema(summary="Пайдаланушыны өшіру (тек admin)", tags=["Users"]),
+)
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -296,6 +319,10 @@ class UserViewSet(viewsets.ModelViewSet):
         })
 
 
+@extend_schema_view(
+    list=extend_schema(summary="Транзакциялар тізімі (admin/cashier)", tags=["Transactions"]),
+    retrieve=extend_schema(summary="Бір транзакция (admin/cashier)", tags=["Transactions"]),
+)
 class TransactionViewSet(viewsets.ModelViewSet):
     serializer_class = TransactionSerializer
     http_method_names = ['get']
