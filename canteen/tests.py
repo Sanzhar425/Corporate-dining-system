@@ -11,7 +11,6 @@ User = get_user_model()
 
 class AuthTests(APITestCase):
     def test_register_and_login(self):
-        # Тіркелу
         res = self.client.post('/api/auth/register/', {
             'username': 'testuser',
             'email': 'test@test.com',
@@ -20,7 +19,6 @@ class AuthTests(APITestCase):
         })
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
         
-        # Кіру
         res = self.client.post('/api/auth/login/', {
             'username': 'testuser',
             'password': 'password123'
@@ -61,34 +59,27 @@ class OrderTests(APITestCase):
         })
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
         
-        # Баланс шегерілді
         self.user.refresh_from_db()
         self.assertEqual(self.user.balance, Decimal('2000'))
         
-        # Тауар азайды
         self.item.refresh_from_db()
         self.assertEqual(self.item.quantity_available, 3)
         
     def test_cancel_order_returns_money_and_stock(self):
-        # Тапсырыс жасау
         res = self.client.post('/api/orders/', {
             'items': [{'menu_item': self.item.id, 'quantity': 1}]
         })
         order_id = res.data['id']
         
-        # Болдырмау
         res = self.client.delete(f'/api/orders/{order_id}/')
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         
-        # Баланс қайтты
         self.user.refresh_from_db()
         self.assertEqual(self.user.balance, Decimal('5000'))
         
-        # Тауар қайтты
         self.item.refresh_from_db()
         self.assertEqual(self.item.quantity_available, 5)
         
-        # Транзакция пайда болды
         self.assertTrue(Transaction.objects.filter(type='deposit').exists())
 
 
