@@ -467,6 +467,11 @@ async function init() {
   balance = parseFloat(user.balance) || 0;
   document.getElementById('balance').textContent = balance.toLocaleString() + ' ₸';
 
+  // Кассир/админ сілтемесін көрсету
+  if (user.role === 'cashier' || user.role === 'admin') {
+    document.getElementById('cashier-link').style.display = 'inline-block';
+  }
+
   await loadMenu();
 }
 
