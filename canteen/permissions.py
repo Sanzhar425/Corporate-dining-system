@@ -17,9 +17,15 @@ class IsAdminOrCashier(BasePermission):
 
 
 class IsOwnerOrAdmin(BasePermission):
-    """Нысан иесі немесе admin рұқсат алады."""
+    """Нысан иесі немесе admin рұқсат алады.
+
+    obj — Order, Transaction (user_id өрісі бар) немесе User-дің өзі
+    (бұл жағдайда obj.id == request.user.id тексеріледі) болуы мүмкін.
+    """
     def has_object_permission(self, request, view, obj):
         if request.user.role == 'admin':
             return True
-        # obj — Order немесе Transaction болуы мүмкін
-        return getattr(obj, 'user_id', None) == request.user.id
+        owner_id = getattr(obj, 'user_id', None)
+        if owner_id is None:
+            owner_id = getattr(obj, 'id', None)
+        return owner_id == request.user.id
