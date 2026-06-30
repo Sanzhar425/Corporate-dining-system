@@ -1,6 +1,9 @@
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework_simplejwt.views import TokenRefreshView
+from drf_spectacular.views import (
+    SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView,
+)
 from canteen.auth_views import RegisterView, LoginView, LogoutView, MeView
 
 urlpatterns = [
@@ -13,6 +16,11 @@ urlpatterns = [
     path('api/auth/logout/',   LogoutView.as_view(),   name='logout'),
     path('api/auth/me/',       MeView.as_view(),        name='me'),
     path('api/auth/refresh/',  TokenRefreshView.as_view(), name='token_refresh'),
+
+    # API құжаттамасы (Swagger / ReDoc)
+    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+    path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    path('api/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
 ]
 
 from django.http import JsonResponse
