@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist',
     'corsheaders',
+    'drf_spectacular',
     'canteen',
 ]
 
@@ -51,6 +52,17 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
     ),
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Corporate Dining System API',
+    'DESCRIPTION': 'Корпоративтік асхана жүйесінің REST API құжаттамасы. '
+                    'Аутентификация, рөлдер (admin/cashier/user), мәзір, '
+                    'тапсырыстар және транзакциялар.',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'COMPONENT_SPLIT_REQUEST': True,
 }
 
 CORS_ALLOW_ALL_ORIGINS = True
