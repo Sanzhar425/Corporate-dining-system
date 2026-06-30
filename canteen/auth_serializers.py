@@ -4,28 +4,25 @@ from .models import User
 
 
 class RegisterSerializer(serializers.ModelSerializer):
+    """
+    Жария тіркелу (POST /api/auth/register/) тек 'user' рөлін жасайды.
+
+    'cashier' немесе 'admin' рөлін ешкім өзіне-өзі бере алмайды —
+    мұндай рұқсаттарды тек admin /api/users/{id}/ арқылы (PATCH) тағайындай
+    алады. Бұл артық құқық алуды (privilege escalation) болдырмайды.
+    """
     password = serializers.CharField(write_only=True, min_length=6)
 
     class Meta:
         model = User
-        fields = ['username', 'email', 'password', 'role']
-        extra_kwargs = {
-            'role': {'default': 'user'},
-        }
-
-    def validate_role(self, value):
-        if value not in ('user', 'cashier'):
-            raise serializers.ValidationError(
-                "Рөл тек 'user' немесе 'cashier' болуы мүмкін."
-            )
-        return value
+        fields = ['username', 'email', 'password']
 
     def create(self, validated_data):
         return User.objects.create_user(
             username=validated_data['username'],
             email=validated_data.get('email', ''),
             password=validated_data['password'],
-            role=validated_data.get('role', 'user'),
+            role='user',
         )
 
 
