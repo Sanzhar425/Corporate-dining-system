@@ -5,6 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 from django.db.models import Sum, Count
 from django.db import transaction as db_transaction
+from decimal import Decimal, InvalidOperation
 from drf_spectacular.utils import extend_schema, extend_schema_view
 
 from .models import MenuItem, Order, OrderItem, Transaction, User
@@ -247,10 +248,10 @@ class UserViewSet(viewsets.ModelViewSet):
             )
         amount = request.data.get('amount', 0)
         try:
-            amount = float(amount)
+            amount = Decimal(str(amount))
             if amount <= 0:
                 raise ValueError
-        except (ValueError, TypeError):
+        except (ValueError, TypeError, InvalidOperation):
             return Response(
                 {'error': 'Сома дұрыс емес! 0-ден үлкен болуы керек.', 'status': 400},
                 status=status.HTTP_400_BAD_REQUEST
