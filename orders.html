@@ -60,7 +60,6 @@
   .page-title { font-family: 'Playfair Display', serif; font-size: 32px; margin-bottom: 6px; }
   .page-sub { color: var(--brown-mid); font-size: 14px; font-weight: 300; margin-bottom: 32px; }
 
-  /* STATS */
   .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 32px; }
 
   .stat {
@@ -74,7 +73,6 @@
   .stat-val { font-size: 28px; font-weight: 600; color: var(--accent); font-family: 'Playfair Display', serif; }
   .stat-sub { font-size: 12px; color: var(--brown-mid); margin-top: 4px; }
 
-  /* ORDERS */
   .orders { display: flex; flex-direction: column; gap: 16px; }
 
   .order {
@@ -95,7 +93,6 @@
   }
 
   .order-id { font-size: 12px; color: var(--brown-mid); margin-bottom: 4px; }
-
   .order-date { font-size: 13px; font-weight: 500; }
 
   .status {
@@ -110,6 +107,7 @@
   .status.pending { background: var(--orange-light); color: #B36A30; }
   .status.preparing { background: var(--blue-light); color: var(--blue); }
   .status.cancelled { background: var(--red-light); color: var(--red); }
+  .status.ready { background: #E8F2EC; color: #4A7C59; }
 
   .order-items { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
 
@@ -143,7 +141,20 @@
   }
   .order-reorder:hover { border-color: var(--accent); color: var(--accent); }
 
-  /* BALANCE TOP UP */
+  .cancel-btn {
+    background: var(--red-light);
+    border: 1px solid var(--red);
+    border-radius: 8px;
+    padding: 6px 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    color: var(--red);
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-left: 8px;
+  }
+  .cancel-btn:hover { background: var(--red); color: var(--white); }
+
   .topup-card {
     background: linear-gradient(135deg, var(--accent) 0%, #B36A30 100%);
     border-radius: 16px;
@@ -174,6 +185,66 @@
   }
 
   .topup-btn:hover { background: rgba(255,255,255,0.3); }
+
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(61,43,31,0.4);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-overlay.show { display: flex; }
+
+  .modal {
+    background: var(--white);
+    border-radius: 16px;
+    padding: 28px;
+    width: 360px;
+    box-shadow: 0 8px 32px var(--shadow);
+  }
+  .modal-title { font-family: 'Playfair Display', serif; font-size: 20px; margin-bottom: 20px; }
+  .modal-label { font-size: 12px; color: var(--brown-mid); margin-bottom: 6px; display: block; }
+  .modal-input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1.5px solid var(--warm);
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    margin-bottom: 16px;
+  }
+  .modal-input:focus { outline: none; border-color: var(--accent); }
+  .modal-actions { display: flex; gap: 10px; }
+  .modal-btn {
+    flex: 1;
+    padding: 12px;
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    cursor: pointer;
+    border: none;
+  }
+  .modal-btn.primary { background: var(--accent); color: var(--white); }
+  .modal-btn.secondary { background: var(--cream); color: var(--brown); border: 1.5px solid var(--warm); }
+
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--green);
+    color: #fff;
+    padding: 14px 28px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    z-index: 999;
+    transition: transform 0.3s ease;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .toast.error { background: var(--red); }
 </style>
 </head>
 <body>
@@ -183,6 +254,7 @@
   <div class="nav-links">
     <a href="menu.html" class="nav-link">🍽 Мәзір</a>
     <a href="orders.html" class="nav-link active">📋 Тапсырыстар</a>
+    <a href="cashier.html" class="nav-link" id="cashier-link" style="display:none">💼 Кассир</a>
     <a href="#" class="nav-link" onclick="logout()">🚪 Шығу</a>
   </div>
 </nav>
@@ -194,25 +266,25 @@
   <div class="topup-card">
     <div class="topup-left">
       <div class="topup-label">Ағымдағы баланс</div>
-      <div class="topup-amount">5 000 ₸</div>
+      <div class="topup-amount" id="balance-display">5 000 ₸</div>
     </div>
-    <button class="topup-btn" onclick="alert('Баланс толтыру беті')">+ Баланс толтыру</button>
+    <button class="topup-btn" onclick="openTopupModal()">+ Баланс толтыру</button>
   </div>
 
-  <div class="stats">
+  <div class="stats" id="stats">
     <div class="stat">
       <div class="stat-label">Жалпы тапсырыс</div>
-      <div class="stat-val">14</div>
+      <div class="stat-val" id="stat-total">14</div>
       <div class="stat-sub">осы айда</div>
     </div>
     <div class="stat">
       <div class="stat-label">Жұмсалған</div>
-      <div class="stat-val">8 420 ₸</div>
+      <div class="stat-val" id="stat-spent">8 420 ₸</div>
       <div class="stat-sub">осы айда</div>
     </div>
     <div class="stat">
       <div class="stat-label">Орташа тапсырыс</div>
-      <div class="stat-val">601 ₸</div>
+      <div class="stat-val" id="stat-avg">601 ₸</div>
       <div class="stat-sub">бір рет</div>
     </div>
   </div>
@@ -220,21 +292,39 @@
   <div class="orders" id="orders-list"></div>
 </main>
 
+<div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+  <div class="modal">
+    <div class="modal-title">Баланс толтыру</div>
+    <label class="modal-label">Соманы енгізіңіз (₸)</label>
+    <input type="number" class="modal-input" id="topup-amount" placeholder="Мысалы: 5000" min="1">
+    <div class="modal-actions">
+      <button class="modal-btn secondary" onclick="closeModal()">Болдырмау</button>
+      <button class="modal-btn primary" onclick="submitTopup()">Толтыру</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
 <script>
 const API = 'http://127.0.0.1:8000';
-
 const statusLabel = {
   completed: 'Аяқталды', pending: 'Күтілуде',
   preparing: 'Дайындалуда', cancelled: 'Болдырылмады', ready: 'Дайын'
 };
 
+let currentUser = null;
+
 async function init() {
   const userStr = localStorage.getItem('user');
   if (!userStr) { window.location.href = 'login.html'; return; }
-  const user = JSON.parse(userStr);
+  currentUser = JSON.parse(userStr);
 
-  document.querySelector('.topup-amount').textContent =
-    parseFloat(user.balance).toLocaleString() + ' ₸';
+  document.getElementById('balance-display').textContent = parseFloat(currentUser.balance).toLocaleString() + ' ₸';
+
+  if (currentUser.role === 'cashier' || currentUser.role === 'admin') {
+    document.getElementById('cashier-link').style.display = 'inline-block';
+  }
 
   await loadOrders();
 }
@@ -248,40 +338,29 @@ async function loadOrders() {
   const data = await res.json();
   const orders = data.results || data;
 
-  // Статистика
   const total = orders.length;
   const spent = orders.reduce((s, o) => s + parseFloat(o.total_amount), 0);
   const avg = total ? Math.round(spent / total) : 0;
 
-  document.querySelector('.stats').innerHTML = `
-    <div class="stat">
-      <div class="stat-label">Жалпы тапсырыс</div>
-      <div class="stat-val">${total}</div>
-      <div class="stat-sub">барлығы</div>
-    </div>
-    <div class="stat">
-      <div class="stat-label">Жұмсалған</div>
-      <div class="stat-val">${spent.toLocaleString()} ₸</div>
-      <div class="stat-sub">барлығы</div>
-    </div>
-    <div class="stat">
-      <div class="stat-label">Орташа тапсырыс</div>
-      <div class="stat-val">${avg.toLocaleString()} ₸</div>
-      <div class="stat-sub">бір рет</div>
-    </div>
-  `;
+  document.getElementById('stat-total').textContent = total;
+  document.getElementById('stat-spent').textContent = spent.toLocaleString() + ' ₸';
+  document.getElementById('stat-avg').textContent = avg.toLocaleString() + ' ₸';
 
   const list = document.getElementById('orders-list');
   if (orders.length === 0) {
-    list.innerHTML = '<p style="color:var(--brown-mid);text-align:center;padding:40px">Тапсырыстар жоқ</p>';
+    list.innerHTML = '<p style="color:var(--brown-mid);text-align:center;padding:40px">Тапсырыстар тарихы бос</p>';
     return;
   }
 
   list.innerHTML = orders.map((o, i) => {
     const date = new Date(o.ordered_at).toLocaleString('kk-KZ');
     const items = (o.items || []).map(it =>
-      `<span class="order-item-tag">${it.name} ×${it.quantity}</span>`
+      `<span class="order-item-tag">${it.menu_item?.name || it.name} ×${it.quantity}</span>`
     ).join('');
+
+    const canCancel = (o.status === 'pending' || o.status === 'preparing') && currentUser.role === 'user';
+    const cancelBtn = canCancel ? `<button class="cancel-btn" onclick="cancelOrder(${o.id})">Болдырмау</button>` : '';
+
     return `
       <div class="order" style="animation-delay:${i * 0.07}s">
         <div class="order-header">
@@ -294,10 +373,93 @@ async function loadOrders() {
         <div class="order-items">${items || '<span class="order-item-tag">—</span>'}</div>
         <div class="order-footer">
           <div class="order-total">${parseFloat(o.total_amount).toLocaleString()} ₸</div>
+          <div>
+            <button class="order-reorder" onclick="reorder(${o.id})">Қайта тапсырыс</button>
+            ${cancelBtn}
+          </div>
         </div>
       </div>
     `;
   }).join('');
+}
+
+async function cancelOrder(orderId) {
+  if (!confirm('Тапсырысты болдырмауға сенімдісіз бе?')) return;
+  const res = await fetch(`${API}/api/orders/${orderId}/`, {
+    method: 'DELETE',
+    headers: { 'Authorization': 'Bearer ' + localStorage.getItem('access') }
+  });
+  const data = await res.json();
+  if (res.ok) {
+    showToast(data.detail || 'Тапсырыс болдырылмады');
+    await refreshUser();
+    await loadOrders();
+  } else {
+    showToast(data.error || 'Қате орын алды', true);
+  }
+}
+
+async function refreshUser() {
+  const res = await fetch(`${API}/api/auth/me/`, {
+    headers: { 'Authorization': 'Bearer ' + localStorage.getItem('access') }
+  });
+  if (res.ok) {
+    const user = await res.json();
+    currentUser = user;
+    localStorage.setItem('user', JSON.stringify(user));
+    document.getElementById('balance-display').textContent = parseFloat(user.balance).toLocaleString() + ' ₸';
+  }
+}
+
+function reorder(id) {
+  window.location.href = 'menu.html';
+}
+
+function openTopupModal() {
+  document.getElementById('modal-overlay').classList.add('show');
+  document.getElementById('topup-amount').value = '';
+  document.getElementById('topup-amount').focus();
+}
+
+function closeModal(e) {
+  if (!e || e.target === document.getElementById('modal-overlay')) {
+    document.getElementById('modal-overlay').classList.remove('show');
+  }
+}
+
+async function submitTopup() {
+  const amount = parseFloat(document.getElementById('topup-amount').value);
+  if (!amount || amount <= 0) {
+    showToast('Сома 0-ден үлкен болуы керек', true);
+    return;
+  }
+
+  const userId = currentUser.id;
+  const res = await fetch(`${API}/api/users/${userId}/topup/`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + localStorage.getItem('access')
+    },
+    body: JSON.stringify({ amount: amount })
+  });
+
+  const data = await res.json();
+  if (res.ok) {
+    showToast(`Баланс толтырылды: ${amount.toLocaleString()} ₸`);
+    closeModal();
+    await refreshUser();
+  } else {
+    showToast(data.error || 'Толтыру сәтсіз аяқталды', true);
+  }
+}
+
+function showToast(msg, isError) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast' + (isError ? ' error' : '');
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
 }
 
 async function logout() {
