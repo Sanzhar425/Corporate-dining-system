@@ -3,12 +3,14 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
+from drf_spectacular.utils import extend_schema
 
 from .models import User
 from .auth_serializers import RegisterSerializer, LoginSerializer
 from .serializers import UserSerializer
 
 
+@extend_schema(tags=["Auth"], summary="Тіркелу (Register)")
 class RegisterView(generics.CreateAPIView):
     """
     POST /api/auth/register/
@@ -34,6 +36,12 @@ class RegisterView(generics.CreateAPIView):
         )
 
 
+@extend_schema(
+    tags=["Auth"],
+    summary="Жүйеге кіру (Login)",
+    request=LoginSerializer,
+    responses={200: UserSerializer},
+)
 class LoginView(APIView):
     """
     POST /api/auth/login/
@@ -57,6 +65,12 @@ class LoginView(APIView):
         )
 
 
+@extend_schema(
+    tags=["Auth"],
+    summary="Жүйеден шығу (Logout)",
+    request={"application/json": {"type": "object", "properties": {"refresh": {"type": "string"}}}},
+    responses={200: {"type": "object", "properties": {"detail": {"type": "string"}}}},
+)
 class LogoutView(APIView):
     """
     POST /api/auth/logout/
@@ -78,6 +92,7 @@ class LogoutView(APIView):
             )
 
 
+@extend_schema(tags=["Auth"], summary="Ағымдағы пайдаланушы (Me)", responses={200: UserSerializer})
 class MeView(APIView):
     """
     GET /api/auth/me/
