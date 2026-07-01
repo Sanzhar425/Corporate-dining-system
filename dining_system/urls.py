@@ -13,6 +13,7 @@ urlpatterns = [
     # Frontend (HTML) беттері — сол бэкендтен қызмет көрсетіледі
     path('', TemplateView.as_view(template_name='login.html')),
     path('login.html', TemplateView.as_view(template_name='login.html')),
+    path('register.html', TemplateView.as_view(template_name='register.html')),
     path('menu.html', TemplateView.as_view(template_name='menu.html')),
     path('orders.html', TemplateView.as_view(template_name='orders.html')),
     path('cashier.html', TemplateView.as_view(template_name='cashier.html')),
