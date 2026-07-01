@@ -386,8 +386,8 @@ class ReportViewSet(viewsets.ViewSet):
         else:
             target_date = timezone.now().date()
 
-        start = datetime.combine(target_date, datetime.min.time())
-        end = datetime.combine(target_date, datetime.max.time())
+        start = timezone.make_aware(datetime.combine(target_date, datetime.min.time()))
+        end = timezone.make_aware(datetime.combine(target_date, datetime.max.time()))
 
         orders = Order.objects.filter(
             ordered_at__range=(start, end),
@@ -441,8 +441,8 @@ class ReportViewSet(viewsets.ViewSet):
         except ValueError:
             return Response({'error': 'Қате формат. YYYY-MM-DD'}, status=400)
 
-        start = datetime.combine(start_date, datetime.min.time())
-        end = datetime.combine(end_date, datetime.max.time())
+        start = timezone.make_aware(datetime.combine(start_date, datetime.min.time()))
+        end = timezone.make_aware(datetime.combine(end_date, datetime.max.time()))
 
         orders = Order.objects.filter(
             ordered_at__range=(start, end),
