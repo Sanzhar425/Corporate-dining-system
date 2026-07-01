@@ -55,8 +55,8 @@ class OrderTests(APITestCase):
         
     def test_create_order(self):
         res = self.client.post('/api/orders/', {
-            'items': [{'menu_item': self.item.id, 'quantity': 2}]
-        })
+    'items': [{'menu_item': self.item.id, 'quantity': 2}]
+}, format='json')
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
         
         self.user.refresh_from_db()
@@ -68,7 +68,7 @@ class OrderTests(APITestCase):
     def test_cancel_order_returns_money_and_stock(self):
         res = self.client.post('/api/orders/', {
             'items': [{'menu_item': self.item.id, 'quantity': 1}]
-        })
+        }, format='json')
         order_id = res.data['id']
         
         res = self.client.delete(f'/api/orders/{order_id}/')
