@@ -36,14 +36,23 @@ source venv/bin/activate
 ```bash
 pip install -r requirements.txt
 ```
+### 4. .env файлын жасау
 
-### 4. Дерекқор миграциясы
+```bash
+cp .env.example .env
+```
+
+> Бұл қадам міндетті! Онсыз `DEBUG=False` әдепкі бойынша қосылады және
+> Django localhost-та HTTPS-ке мәжбүрлі қайта бағыттайды (301 Moved
+> Permanently), сервер жұмыс істемейді.
+
+### 5. Дерекқор миграциясы
 
 ```bash
 python manage.py migrate
 ```
 
-### 5. (Міндетті емес) Сынақ деректерін жүктеу
+### 6. (Міндетті емес) Сынақ деректерін жүктеу
 
 Мәзір мен тестілік пайдаланушыларды толтыру:
 
@@ -67,7 +76,7 @@ python manage.py seed
 python manage.py createsuperuser
 ```
 
-### 6. Серверді іске қосу
+### 7. Серверді іске қосу
 
 ```bash
 python manage.py runserver
