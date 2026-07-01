@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Асхана — Тіркелу</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --cream: #F5F0E8;
+    --warm: #E8DCC8;
+    --brown: #3D2B1F;
+    --brown-mid: #7A5C44;
+    --accent: #C4773A;
+    --accent-light: #E8A86A;
+    --white: #FDFAF5;
+    --shadow: rgba(61,43,31,0.15);
+    --error: #C4453A;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 10% 20%, rgba(196,119,58,0.12) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 60% at 90% 80%, rgba(122,92,68,0.10) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .deco {
+    position: fixed;
+    font-family: 'Playfair Display', serif;
+    color: rgba(61,43,31,0.04);
+    font-size: 220px;
+    font-weight: 700;
+    letter-spacing: -10px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    white-space: nowrap;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .card {
+    background: var(--white);
+    border-radius: 24px;
+    padding: 52px 48px;
+    width: 420px;
+    box-shadow: 0 8px 48px var(--shadow), 0 1px 0 rgba(255,255,255,0.8) inset;
+    position: relative;
+    z-index: 1;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 36px;
+  }
+
+  .logo-icon {
+    width: 44px;
+    height: 44px;
+    background: var(--accent);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+  }
+
+  .logo-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    color: var(--brown);
+    line-height: 1.1;
+  }
+
+  .logo-sub {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    color: var(--brown-mid);
+    font-weight: 300;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    color: var(--brown);
+    margin-bottom: 6px;
+  }
+
+  .subtitle {
+    font-size: 14px;
+    color: var(--brown-mid);
+    margin-bottom: 32px;
+    font-weight: 300;
+  }
+
+  .field {
+    margin-bottom: 20px;
+  }
+
+  label {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--brown-mid);
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  input {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1.5px solid var(--warm);
+    border-radius: 12px;
+    background: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    color: var(--brown);
+    outline: none;
+    transition: border-color 0.2s, background 0.2s;
+  }
+
+  input:focus {
+    border-color: var(--accent);
+    background: var(--white);
+  }
+
+  input::placeholder { color: rgba(122,92,68,0.4); }
+
+  .btn {
+    width: 100%;
+    padding: 16px;
+    background: var(--accent);
+    color: var(--white);
+    border: none;
+    border-radius: 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: background 0.2s, transform 0.1s;
+    letter-spacing: 0.3px;
+  }
+
+  .btn:hover { background: #B36A30; }
+  .btn:active { transform: scale(0.99); }
+  .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+  .msg {
+    margin-top: 14px;
+    font-size: 13px;
+    text-align: center;
+    min-height: 16px;
+  }
+
+  .msg.error { color: var(--error); }
+  .msg.success { color: #3D7A44; }
+
+  .link-row {
+    text-align: center;
+    margin-top: 24px;
+    font-size: 13px;
+    color: var(--brown-mid);
+  }
+
+  .link-row a {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .link-row a:hover { text-decoration: underline; }
+
+  .footer {
+    text-align: center;
+    margin-top: 28px;
+    font-size: 12px;
+    color: var(--brown-mid);
+    opacity: 0.6;
+  }
+</style>
+</head>
+<body>
+<div class="deco">CAFÉ</div>
+<div class="card">
+  <div class="logo">
+    <div class="logo-icon">🍽</div>
+    <div>
+      <div class="logo-text">Асхана</div>
+      <div class="logo-sub">Корпоративтік жүйе</div>
+    </div>
+  </div>
+
+  <h1>Тіркелу</h1>
+  <p class="subtitle">Жаңа аккаунт жасау үшін мәліметтеріңізді енгізіңіз</p>
+
+  <div class="field">
+    <label>Пайдаланушы аты</label>
+    <input id="reg-username" type="text" placeholder="username" autocomplete="username">
+  </div>
+
+  <div class="field">
+    <label>Email</label>
+    <input id="reg-email" type="email" placeholder="you@example.com" autocomplete="email">
+  </div>
+
+  <div class="field">
+    <label>Құпия сөз</label>
+    <input id="reg-password" type="password" placeholder="кемінде 6 таңба" autocomplete="new-password">
+  </div>
+
+  <div class="field">
+    <label>Құпия сөзді қайталаңыз</label>
+    <input id="reg-password2" type="password" placeholder="••••••••" autocomplete="new-password">
+  </div>
+
+  <button class="btn" id="reg-btn" onclick="register()">Тіркелу</button>
+
+  <div id="reg-msg" class="msg"></div>
+
+  <div class="link-row">
+    Аккаунтыңыз бар ма? <a href="login.html">Кіру</a>
+  </div>
+
+  <div class="footer">© 2025 Корпоративтік Асхана Жүйесі</div>
+</div>
+
+<script>
+const PRODUCTION_API = 'https://web-production-09fcdd.up.railway.app';
+const API = (location.hostname === '' || location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+  ? 'http://127.0.0.1:8000'
+  : PRODUCTION_API;
+
+function showMsg(text, type) {
+  const el = document.getElementById('reg-msg');
+  el.textContent = text;
+  el.className = 'msg ' + (type || '');
+}
+
+async function register() {
+  const username = document.getElementById('reg-username').value.trim();
+  const email = document.getElementById('reg-email').value.trim();
+  const password = document.getElementById('reg-password').value;
+  const password2 = document.getElementById('reg-password2').value;
+  const btn = document.getElementById('reg-btn');
+
+  if (!username || !password) {
+    showMsg('Пайдаланушы аты мен құпия сөзді толтырыңыз.', 'error');
+    return;
+  }
+  if (password.length < 6) {
+    showMsg('Құпия сөз кемінде 6 таңбадан тұруы керек.', 'error');
+    return;
+  }
+  if (password !== password2) {
+    showMsg('Құпия сөздер сәйкес келмейді.', 'error');
+    return;
+  }
+
+  btn.disabled = true;
+  showMsg('Тіркелуде...', '');
+
+  try {
+    const response = await fetch(`${API}/api/auth/register/`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, email, password })
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      localStorage.setItem('access', data.access);
+      localStorage.setItem('refresh', data.refresh);
+      localStorage.setItem('user', JSON.stringify(data.user));
+      showMsg('Сәтті тіркелдіңіз! Бағыттау...', 'success');
+      setTimeout(() => { window.location.href = 'menu.html'; }, 700);
+    } else {
+      const firstError = data && typeof data === 'object'
+        ? Object.values(data).flat().join(' ')
+        : 'Тіркелу кезінде қате пайда болды.';
+      showMsg(firstError || 'Тіркелу кезінде қате пайда болды.', 'error');
+      btn.disabled = false;
+    }
+  } catch (e) {
+    showMsg('Серверге қосылу мүмкін болмады.', 'error');
+    btn.disabled = false;
+  }
+}
+</script>
+</body>
+</html>
